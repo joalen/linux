@@ -23,7 +23,10 @@ jobs:
           sudo apt-get install -y build-essential libncurses-dev libelf-dev libelf1 bison flex libssl-dev bc make gcc git wget elfutils libasm1 libdw1
           
       - name: Build repository 
-        run: make defconfig && make -j$(nproc)
+        run: | 
+          export CC=gcc && export CXX=g++ && export CFLAGS="-g -fno-inline -fno-omit-frame-pointer" && export LDFLAGS="
+          sed -i 's/^CC\s*=.*/CC = gcc/' Makefile && sed -i 's/^CXX\s*=.*/CXX = g++/' Makefile && sed -i 's/^CFLAGS\s*=.*/& -g -fno-inline -fno-omit-frame-pointer/' Makefile && sed -i 's/^LDFLAGS\s*=.*/& /' Makefile && sed -i 's/^CPP\s*=.*/CPP = gcc -E/' Makefile
+          make defconfig && make -j$(nproc)
         continue-on-error: true 
 
       - name: Install Dr. Memory
